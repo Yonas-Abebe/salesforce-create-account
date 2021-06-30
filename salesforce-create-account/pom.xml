@@ -79,9 +79,9 @@
 			<cloudHubDeployment>
 				<uri>https://anypoint.mulesoft.com</uri>
 				<muleVersion>${mule.version}</muleVersion>
-				<username>yoni3</username>
-				<password>Mayo7882*#*</password>
-				<environment>Sandbox</environment>
+				<username>username</username>
+				<password>password</password>
+				<environment>env</environment>
 				<applicationName>${appname}</applicationName>
 				<businessGroup>${business}</businessGroup>
 				<workerType>${vCore}</workerType>
@@ -148,7 +148,7 @@
 		</pluginRepository>
 	</pluginRepositories>
     <distributionManagement>
-        <!-- Target Anypoint Organization Repository -->
+  
         <repository>
             <id>MuleRepository</id>
             <name>Your Anypoint Exchange Repository</name>
