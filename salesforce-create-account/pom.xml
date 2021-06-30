@@ -25,6 +25,9 @@
          <anypoint.org.id>202f8892-74e5-4ca8-8aba-c03b6b336322</anypoint.org.id>
 		<app.runtime>4.3.0</app.runtime>
 		<mule.maven.plugin.version>3.5.1</mule.maven.plugin.version>
+		
+		<key>secure.key</key>
+		
 	</properties>
 
 	<build>
