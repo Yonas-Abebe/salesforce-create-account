@@ -16,7 +16,7 @@ http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/sc
 	<global-property doc:name="Global Property" doc:id="6bee3ef0-896a-4f6a-ad41-bc794da0c530" name="env" value="local" />
 	<configuration-properties doc:name="Configuration properties" doc:id="b26d4684-0450-49b5-b7a7-c6f364811657" file="local.properties" />
 
-	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="5187dd6c-c6c9-4d44-bb4e-ac0b806726dc" file="local-secured.properties" key="${secure.key}" >
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="5187dd6c-c6c9-4d44-bb4e-ac0b806726dc" file="local-secured.properties" key="Mayo7882*#*Redu2009*#*" >
 		<secure-properties:encrypt algorithm="Blowfish" />
 	</secure-properties:config>	<flow name="salesforce-create-accountFlow" doc:id="a4f63739-32b8-4cf3-8a1c-2a0c144a4a17" >
 		<http:listener doc:name="Listener" doc:id="f2ad048d-473d-439b-a527-ba0f7ef2e6c7" config-ref="HTTP_Listener_config" path="/create" allowedMethods="POST">
