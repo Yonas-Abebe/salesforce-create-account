@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="contacts" format="csv">
+      <types:shape format="weave" example="contacts.csv"><![CDATA[%dw 2.0
+
+type contacts = Array<{|  FirstName: String,   LastName: String,   AccountName: String,   Email: String,   Phone: String|}> {"isQuotedString": "false",
+"header": "true",
+"headerLineNumber": "0"}
+
+]]></types:shape>
+      <types:properties>
+        <types:property name="headerLineNumber" value="0"/>
+        <types:property name="header" value="true"/>
+        <types:property name="isQuotedString" value="false"/>
+      </types:properties>
+    </types:type>
+    <types:type name="usageRecords" format="csv">
+      <types:shape format="weave" example="examples/usageReport.csv"><![CDATA[%dw 2.0
+
+type usageRecords = Array<{|  Accountid: String,   Companyid: String,   EventCode: String,   Quantity: String|}> {"isQuotedString": "false",
+"header": "true",
+"headerLineNumber": "0"}
+
+]]></types:shape>
+      <types:properties>
+        <types:property name="headerLineNumber" value="0"/>
+        <types:property name="header" value="true"/>
+        <types:property name="isQuotedString" value="false"/>
+      </types:properties>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#b57ecbbc-82bd-4eeb-bb6a-a39356b2fcb7">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="contacts"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="contacts"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#8e130352-50e8-4f9e-9f32-2ef7d29230b5">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="contacts"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#932dddc8-aac5-4edd-8ded-e6d91d26e207">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="usageRecords"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

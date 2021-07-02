@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="c2358a89-10db-4323-8b31-7a322833be07" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="65da600c-878c-4795-9d4d-598566955c78" >
+		<salesforce:basic-connection username="${salesforce.username}" password="${secure::salesforce.password}" securityToken="${secure::salesforce.token}" url="${salesforce.url}"/>
+	</salesforce:sfdc-config>
+	<global-property doc:name="Global Property" doc:id="c628626b-76a6-41e7-a061-30e037e613d8" name="env" value="local" />
+	<configuration-properties doc:name="Configuration properties" doc:id="2f3342be-e14d-4bda-834a-1111f790ff47" file="local.properties" />
+
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="78c86bec-5952-4d94-a37a-e4d02b7a1a60" file="local-secured.properties" key="Mayo7882*#*Redu2009*#*" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>	<file:config name="File_Config" doc:name="File Config" doc:id="306c751a-05ad-414c-8c75-d5869b387d9b" >
+	</file:config>
+	<flow name="singleUploadFlow" doc:id="4541fe22-3dc9-4525-95b9-cadabe025efa" >
+		<file:listener doc:name="On New or Updated File" doc:id="2c46be81-19c6-464e-8c44-96ea9ba6c66e" directory="C:\Users\yoni\AnypointStudio\studio-workspace\batch-process-salesforce-create\src\main\resources\input" autoDelete="true">
+			<scheduling-strategy >
+				<fixed-frequency frequency="10" timeUnit="SECONDS"/>
+			</scheduling-strategy>
+		</file:listener>
+		<ee:transform doc:name="Transform Message" doc:id="932dddc8-aac5-4edd-8ded-e6d91d26e207" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="startTime" ><![CDATA[%dw 2.0
+output application/java
+---
+now()]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<batch:job jobName="singleUploadBatch_Job" doc:id="b4a4ea9c-e4a8-431d-9a74-85cea8520dd5" >
+			<batch:process-records >
+				<batch:step name="SFDC_Upload_Step" doc:id="8ab0d8ac-d9b1-4792-a08c-78770408fa67" >
+					<ee:transform doc:name="Map Fields" doc:id="05b1eefb-5793-4d4e-897d-3b2b43cb2dc1" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[{
+	Account_Id__c: payload.Accountid,
+	Company_Id__c: payload.Companyid,
+	Quantity__c: payload.Quantity as Number
+}]]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<salesforce:create doc:name="Create Cusom Usage" doc:id="b6f9d517-1607-43da-8827-33eac78203c5" config-ref="Salesforce_Config" type="Usage__c"/>
+				</batch:step>
+			</batch:process-records>
+			<batch:on-complete >
+				<ee:transform doc:name="now()" doc:id="aa902667-3986-41bb-8710-4179f2836210" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="endTime" ><![CDATA[%dw 2.0
+output application/java
+---
+now()]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<logger level="INFO" doc:name="End" doc:id="c9883f6c-1465-41cb-8a07-be34b7c4fa58" message="#['Total Single Uploading Processing Time was: ' ++ vars.endTime - vars.startTime]" />
+			</batch:on-complete>
+		</batch:job>
+	</flow>
+</mule>
